@@ -22,7 +22,7 @@ import { ProductsModule } from './products/products.module';
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         autoLoadEntities: true,
-        synchronize: true, // 🔴 SOLO para desarrollo. Luego podemos cambiar a migraciones.
+        synchronize: false, // 🔴 SOLO para desarrollo. Luego podemos cambiar a migraciones.
       }),
     }),
     UsersModule,
