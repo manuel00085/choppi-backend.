@@ -6,10 +6,12 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
+  Put
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('products')
@@ -35,5 +37,15 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.productsService.findAll();
+  }
+
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProductDto,
+  ) {
+    return this.productsService.update(id, dto);
   }
 }

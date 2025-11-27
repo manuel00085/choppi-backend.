@@ -1,75 +1,61 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository,  MoreThan } from 'typeorm';
+import { Repository } from 'typeorm';
 import { StoreProduct } from './store-product.entity';
 import { Store } from '../stores/store.entity';
 import { Product } from '../products/product.entity';
+import { CreateStoreProductDto } from './dto/create-store-product.dto';
+import { UpdateStoreProductDto } from './dto/update-store-product.dto';
 
 @Injectable()
 export class StoreProductsService {
   constructor(
     @InjectRepository(StoreProduct)
     private readonly storeProductRepo: Repository<StoreProduct>,
-
     @InjectRepository(Store)
     private readonly storeRepo: Repository<Store>,
-
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
   ) {}
 
-  async addProduct(storeId: number, productId: number, price: number, stock: number) {
+  async create(storeId: number, dto: CreateStoreProductDto) {
     const store = await this.storeRepo.findOne({ where: { id: storeId } });
     if (!store) throw new NotFoundException('Store not found');
 
-    const product = await this.productRepo.findOne({ where: { id: productId } });
+    const product = await this.productRepo.findOne({
+      where: { id: dto.productId },
+    });
     if (!product) throw new NotFoundException('Product not found');
 
     const sp = this.storeProductRepo.create({
       store,
       product,
-      price,
-      stock,
+      price: dto.price,
+      stock: dto.stock,
     });
 
     return this.storeProductRepo.save(sp);
   }
 
-  async getStoreProducts(storeId: number, q?: string, inStock?: boolean, page = 1, limit = 10) {
-    const where: any = { store: { id: storeId } };
-
-    if (q) {
-      where.product = { name: ILike(`%${q}%`) };
-    }
-
-    if (inStock === true) {
-      where.stock = MoreThan(0);
-    }
-
-    const [data, total] = await this.storeProductRepo.findAndCount({
-      where,
-      relations: ['product'],
-      skip: (page - 1) * limit,
-      take: limit,
+  async findAll(storeId: number) {
+    return this.storeProductRepo.find({
+      where: { store: { id: storeId }, isActive: true },
     });
-
-    return { data, total, page, limit };
   }
 
-  async update(storeProductId: number, price: number, stock: number) {
-    const sp = await this.storeProductRepo.findOne({ where: { id: storeProductId } });
-    if (!sp) throw new NotFoundException('StoreProduct not found');
+  async update(id: number, dto: UpdateStoreProductDto) {
+    const sp = await this.storeProductRepo.findOne({ where: { id } });
+    if (!sp) throw new NotFoundException('Store product not found');
 
-    sp.price = price;
-    sp.stock = stock;
-
+    Object.assign(sp, dto);
     return this.storeProductRepo.save(sp);
   }
 
-  async remove(storeProductId: number) {
-    const sp = await this.storeProductRepo.findOne({ where: { id: storeProductId } });
-    if (!sp) throw new NotFoundException('StoreProduct not found');
+  async remove(id: number) {
+    const sp = await this.storeProductRepo.findOne({ where: { id } });
+    if (!sp) throw new NotFoundException('Store product not found');
 
-    return this.storeProductRepo.delete(storeProductId);
+    sp.isActive = false;
+    return this.storeProductRepo.save(sp);
   }
 }

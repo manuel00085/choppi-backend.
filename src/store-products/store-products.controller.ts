@@ -1,65 +1,54 @@
 import {
-  Body,
   Controller,
-  Delete,
+  Post,
   Get,
+  Put,
+  Delete,
+  Body,
   Param,
   ParseIntPipe,
-  Post,
-  Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { StoreProductsService } from './store-products.service';
+import { CreateStoreProductDto } from './dto/create-store-product.dto';
+import { UpdateStoreProductDto } from './dto/update-store-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('store-products')
 @Controller('stores/:storeId/products')
 export class StoreProductsController {
-  constructor(private readonly storeProductsService: StoreProductsService) {}
+  constructor(private readonly sps: StoreProductsService) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
-  addProduct(
+  create(
     @Param('storeId', ParseIntPipe) storeId: number,
-    @Body() body: { productId: number; price: number; stock: number },
+    @Body() dto: CreateStoreProductDto,
   ) {
-    return this.storeProductsService.addProduct(storeId, body.productId, body.price, body.stock);
+    return this.sps.create(storeId, dto);
   }
 
   @Get()
-  getProducts(
-    @Param('storeId', ParseIntPipe) storeId: number,
-    @Query('q') q?: string,
-    @Query('inStock') inStock?: string,
-    @Query('page') page = '1',
-    @Query('limit') limit = '10',
-  ) {
-    return this.storeProductsService.getStoreProducts(
-      storeId,
-      q,
-      inStock === 'true',
-      +page,
-      +limit,
-    );
+  findAll(@Param('storeId', ParseIntPipe) storeId: number) {
+    return this.sps.findAll(storeId);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Put(':storeProductId')
+  @Put(':id')
   update(
-    @Param('storeProductId', ParseIntPipe) id: number,
-    @Body() body: { price: number; stock: number },
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateStoreProductDto,
   ) {
-    return this.storeProductsService.update(id, body.price, body.stock);
+    return this.sps.update(id, dto);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete(':storeProductId')
-  remove(@Param('storeProductId', ParseIntPipe) id: number) {
-    return this.storeProductsService.remove(id);
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.sps.remove(id);
   }
 }
