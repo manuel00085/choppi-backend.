@@ -31,7 +31,7 @@ export class StoreProductsController {
   }
 
   @Get(':storeProductId')
-findOne(
+  findOne(
   @Param('storeId', ParseIntPipe) storeId: number,
   @Param('storeProductId', ParseIntPipe) storeProductId: number,
 ) {
