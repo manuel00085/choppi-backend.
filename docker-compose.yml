@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: choppi_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: choppi
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - choppi_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d choppi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: choppi_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: admin
+      DB_NAME: choppi
+      JWT_SECRET: supersecret
+      JWT_EXPIRES_IN: 1d
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "
+        npm run migration:run:prod &&
+        npm run seed &&
+        npm run start:prod
+      "
+    networks:
+      - choppi_net
+
+volumes:
+  db_data:
+
+networks:
+  choppi_net:

@@ -17,12 +17,12 @@ import { ProductsModule } from './products/products.module';
       useFactory: () => ({
         type: 'postgres',
         host: process.env.DB_HOST,
-        port: parseInt(process.env.DB_PORT ?? '5432', 10), // aquí evitamos el error de "possibly undefined"
+        port: parseInt(process.env.DB_PORT ?? '5432', 10), 
         username: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
         autoLoadEntities: true,
-        synchronize: false, // 🔴 SOLO para desarrollo. Luego podemos cambiar a migraciones.
+        synchronize: false, // True SOLO para desarrollo.
       }),
     }),
     UsersModule,

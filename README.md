@@ -63,9 +63,18 @@ npm run migration:generate
 ```
 
 ### Ejecutar migraciones
+
+-Desarrollo
+
 ```bash
-npm run migration:run
+npm run migration:run:dev
 ```
+-Produccion / Docker
+
+```bash
+npm run migration:run:pro
+```
+
 
 ---
 
