@@ -24,9 +24,9 @@ export class ProductsService {
   }
 
   // opcional: por si luego quieres listar
-  async findAll() {
-    return this.productRepo.find();
-  }
+ findAll() {
+  return this.productRepo.find({ where: { isActive: true } });
+}
 
   async update(id: number, dto: UpdateProductDto) {
     const product = await this.findOne(id);
@@ -34,8 +34,9 @@ export class ProductsService {
     return this.productRepo.save(product);
   }
 
-  async remove(id: number) {
-    const product = await this.findOne(id);
-    return this.productRepo.remove(product);
-  }
+ async remove(id: number) {
+  const product = await this.findOne(id);
+  product.isActive = false;
+  return this.productRepo.save(product);
+}
 }

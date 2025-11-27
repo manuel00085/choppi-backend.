@@ -6,7 +6,8 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
-  Put
+  Put,
+  Delete
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -19,7 +20,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  // POST /products (protegido)
+ 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -27,19 +28,19 @@ export class ProductsController {
     return this.productsService.create(dto);
   }
 
-  // GET /products/:id (público)
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
 
-  // opcional para probar:
+
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
-    @ApiBearerAuth()
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(
@@ -48,4 +49,12 @@ export class ProductsController {
   ) {
     return this.productsService.update(id, dto);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.remove(id);
+  }
+
 }

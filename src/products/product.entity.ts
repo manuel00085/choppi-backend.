@@ -9,6 +9,10 @@ export class Product {
   @Column()
   name: string;
 
+  @Column({ default: true })
+ isActive: boolean;
+
+
   @Column({ nullable: true })
   description: string;
 
