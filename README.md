@@ -21,7 +21,7 @@ Incluye autenticación, manejo de tiendas, productos, inventario (store-products
 
 ### 1️ Clonar el repositorio
 ```bash
-git clone https://github.com/tuusuario/choppi-backend.git
+git clone https://github.com/manuel00085/choppi-backend.
 cd choppi-backend
 ```
 
