@@ -47,11 +47,21 @@ async function seed() {
   // Crear productos
   const productRepo = AppDataSource.getRepository(Product);
   const products = await productRepo.save([
-    { name: 'Camisa Deportiva', description: 'Tela fresca' },
-    { name: 'Pantalón Fitness', description: 'Tela stretch' },
-    { name: 'Gorra Running', description: 'Ligera' },
-    { name: 'Chaqueta térmica', description: 'Para frío' },
-    { name: 'Zapatos Training', description: 'Alta resistencia' },
+  { name: 'Camisa Deportiva', description: 'Tela fresca' },
+  { name: 'Pantalón Fitness', description: 'Tela stretch' },
+  { name: 'Chaqueta Térmica', description: 'Para frío' },
+  { name: 'Zapatos Running', description: 'Alta resistencia' },
+  { name: 'Gorra Running', description: 'Ligera' },
+  { name: 'Short Deportivo', description: 'Secado rápido' },
+  { name: 'Medias Antideslizantes', description: 'Confort' },
+  { name: 'Bandana Deportiva', description: 'Absorbente' },
+  { name: 'Suéter Ligero', description: 'Comodidad' },
+  { name: 'Pantalón Jogger', description: 'Ajuste moderno' },
+  { name: 'Short Deportivo', description: 'Secado rápido y ligero' },
+  { name: 'Suéter Ligero', description: 'Ideal para clima templado' },
+  { name: 'Bandana Deportiva', description: 'Absorbe sudor' },
+  { name: 'Pantalón Jogger', description: 'Ajuste moderno y cómodo' },
+  { name: 'Medias Deportivas', description: 'Antideslizantes y acolchadas' },
   ]);
   console.log('📦 Productos creados');
 

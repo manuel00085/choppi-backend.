@@ -38,9 +38,28 @@ export class StoreProductsService {
   }
 
   async findAll(storeId: number) {
-    return this.storeProductRepo.find({
-      where: { store: { id: storeId }, isActive: true },
-    });
+  const store = await this.storeRepo.findOne({ where: { id: storeId } });
+  if (!store) throw new NotFoundException('Store not found');
+
+  const items = await this.storeProductRepo.find({
+    where: { store: { id: storeId }, isActive: true },
+    relations: ['product'],
+  });
+
+  return {
+    store: {
+      id: store.id,
+      name: store.name,
+      address: store.address,
+    },
+    products: items.map((item) => ({
+      id: item.id,
+      productId: item.product.id,
+      name: item.product.name,
+      price: Number(item.price),
+      stock: item.stock,
+    })),
+  };
   }
 
   async update(id: number, dto: UpdateStoreProductDto) {
