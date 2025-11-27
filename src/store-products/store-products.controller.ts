@@ -30,6 +30,14 @@ export class StoreProductsController {
     return this.sps.create(storeId, dto);
   }
 
+  @Get(':storeProductId')
+findOne(
+  @Param('storeId', ParseIntPipe) storeId: number,
+  @Param('storeProductId', ParseIntPipe) storeProductId: number,
+) {
+  return this.sps.findOne(storeId, storeProductId);
+}
+
   @Get()
   findAll(@Param('storeId', ParseIntPipe) storeId: number) {
     return this.sps.findAll(storeId);

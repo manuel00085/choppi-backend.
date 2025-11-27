@@ -58,4 +58,18 @@ export class StoreProductsService {
     sp.isActive = false;
     return this.storeProductRepo.save(sp);
   }
+
+  async findOne(storeId: number, storeProductId: number) {
+  const sp = await this.storeProductRepo.findOne({
+    where: {
+      id: storeProductId,
+      store: { id: storeId },
+    },
+  });
+
+  if (!sp) throw new NotFoundException('Store product not found');
+
+  return sp;
+}
+
 }
