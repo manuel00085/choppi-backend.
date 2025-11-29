@@ -46,6 +46,9 @@ export class StoreProductsService {
   ) {
  const skip = (page - 1) * limit;
 
+  const store = await this.storeRepo.findOne({ where: { id: storeId } });
+  if (!store) throw new NotFoundException('Store not found');
+
   const query = this.storeProductRepo
     .createQueryBuilder('sp')
     .leftJoinAndSelect('sp.product', 'product')
@@ -68,6 +71,7 @@ export class StoreProductsService {
     .getManyAndCount();
 
   return {
+    store,
     data,
     total,
     page,
