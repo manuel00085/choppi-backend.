@@ -21,7 +21,7 @@ Incluye autenticación, manejo de tiendas, productos, inventario (store-products
 
 ### 1️ Clonar el repositorio
 ```bash
-git clone https://github.com/manuel00085/choppi-backend.
+git clone https://github.com/tuusuario/choppi-backend.git
 cd choppi-backend
 ```
 
@@ -72,9 +72,8 @@ npm run migration:run:dev
 -Produccion / Docker
 
 ```bash
-npm run migration:run:pro
+npm run migration:run:prod
 ```
-
 
 ---
 

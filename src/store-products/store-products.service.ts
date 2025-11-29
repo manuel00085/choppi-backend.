@@ -37,29 +37,43 @@ export class StoreProductsService {
     return this.storeProductRepo.save(sp);
   }
 
-  async findAll(storeId: number) {
-  const store = await this.storeRepo.findOne({ where: { id: storeId } });
-  if (!store) throw new NotFoundException('Store not found');
+  async findAll(
+    storeId: number,
+    page: number = 1,
+    limit: number = 10,
+    q?: string,
+    inStock?: boolean,
+  ) {
+ const skip = (page - 1) * limit;
 
-  const items = await this.storeProductRepo.find({
-    where: { store: { id: storeId }, isActive: true },
-    relations: ['product'],
-  });
+  const query = this.storeProductRepo
+    .createQueryBuilder('sp')
+    .leftJoinAndSelect('sp.product', 'product')
+    .where('sp.storeId = :storeId', { storeId })
+    .andWhere('sp.isActive = true')
+    .andWhere('product.isActive = true');
+
+  if (q) {
+    query.andWhere('product.name ILIKE :q', { q: `%${q}%` });
+  }
+
+  if (inStock === true) {
+    query.andWhere('sp.stock > 0');
+  }
+
+  const [data, total] = await query
+    .skip(skip)
+    .take(limit)
+    .orderBy('sp.id', 'ASC')
+    .getManyAndCount();
 
   return {
-    store: {
-      id: store.id,
-      name: store.name,
-      address: store.address,
-    },
-    products: items.map((item) => ({
-      id: item.id,
-      productId: item.product.id,
-      name: item.product.name,
-      price: Number(item.price),
-      stock: item.stock,
-    })),
-  };
+    data,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  }
   }
 
   async update(id: number, dto: UpdateStoreProductDto) {

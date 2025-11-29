@@ -8,8 +8,9 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { StoreProductsService } from './store-products.service';
 import { CreateStoreProductDto } from './dto/create-store-product.dto';
 import { UpdateStoreProductDto } from './dto/update-store-product.dto';
@@ -39,8 +40,22 @@ export class StoreProductsController {
 }
 
   @Get()
-  findAll(@Param('storeId', ParseIntPipe) storeId: number) {
-    return this.sps.findAll(storeId);
+    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+    @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+    @ApiQuery({ name: 'q', required: false, type: String, example: 'camisa' })
+  findAll(
+    @Param('storeId', ParseIntPipe) storeId: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('q') q?: string,
+  
+  ) {
+    return this.sps.findAll(
+      storeId,
+      +page,
+      +limit,
+      q,
+    );
   }
 
   @ApiBearerAuth()
